@@ -1,3 +1,4 @@
+  label_bulk_schedules_index: Bulk schedule
   label_schedules_my_index: My schedule
   label_schedules_default: Editing default availability for %s
   label_schedules_report: Schedule report
@@ -30,3 +31,4 @@
   button_schedules_edit: Edit schedule
   button_schedules_default_edit: Edit default availability
   button_schedules_fill: Fill schedule
+  button_quick_issue: Quick issue
