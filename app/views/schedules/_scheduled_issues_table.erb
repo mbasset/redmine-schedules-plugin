@@ -1,0 +1,17 @@
+<%#
+# To change this template, choose Tools | Templates
+# and open the template in the editor.
+%>
+
+<table class="issueTable">
+  <tr><th>#</th>
+    <% if(defined?(Deliverable)) %>
+      <th class="deliverable" style="display: none"><%= l(:label_field_deliverable) %> </th>
+    <% end %>
+
+    <th><%= l(:field_subject) %></th></tr>
+
+  <%= render :partial => 'schedule_issue_entry',
+    :collection => issues,
+    :locals => { :scheduled => scheduled.nil? ? nil : scheduled } %>
+</table>
