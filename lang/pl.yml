@@ -1,4 +1,3 @@
-pl:
   label_schedules_my_index: Moj harmonogram
   label_bulk_schedules_index: Harmonogram zbiorczy
   label_schedules_default: Edytuj domyslna dostepnosci dla %s
@@ -32,3 +31,30 @@ pl:
   button_schedules_edit: Edytuj harmonogram
   button_schedules_default_edit: Edytuj domyslna dostepnosc
   button_schedules_fill: Wypelnij harmonogram
+  label_checkbox_all: Wszystkie
+  label_checkbox_unassigned: Nieprzypisane
+  label_field_deliverable: Sprint
+  label_available_hours: Dostêpne godziny
+  label_scheduled_hours: Zaplanowane godziny
+  label_assigned_issues: Przypisane zagadnienia
+  info_no_scheduled_issues: Czas zaplanowany, bez przypisanych zagadnien
+  label_hours_to_schedule: Liczba godzin do zaplanowania
+  label_no_issue_assigned: bez przypisanych zagadnieñ
+  warning_to_many_scheduled_hours: Zaplanowa³es zbyt wiele godzin
+  label_you_have: Masz
+  label_empty_hours_left: nieprzypisanych godzin
+  label_used_total: £¹cznie zu¿yto
+  label_used_today: Zu¿ytych dzisiaj
+  label_toggle_deliverable: Poka¿/schowaj kolumnê sprint
+  label_toggle_version: Poka¿/schowaj kolumnê wersja
+  label_scheduled_issues: Zaplanowane zagadnienia
+  label_no_scheduled_issues: Brak zaplanowanych na dziœ zagadnieñ
+  label_no_other_issues: Brak innych zagadnieñ
+  label_not_scheduled_issues: Niezaplanowane zagadnienia
+  label_member_issues: Zagadnienia innych osób
+  button_quick_issue: Szybkie tworzenie zagadnienia
+  button_exit: WyjdŸ
+  error_no_trackers: Brak zagadnieñ zwi¹zanych z tym projektem. Proszê sprawdŸ ustawienia projektu.
+  label_no_developers_in_project: W tym projekcie nie ma programistów.
+  none: Brak
+  no_one: Brak przypisania
