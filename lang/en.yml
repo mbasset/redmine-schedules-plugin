@@ -31,4 +31,29 @@
   button_schedules_edit: Edit schedule
   button_schedules_default_edit: Edit default availability
   button_schedules_fill: Fill schedule
+  label_checkbox_all: All
+  label_checkbox_unassigned: Unassigned
+  label_field_deliverable: Deliverable
+  label_available_hours: Available hours
+  label_scheduled_hours: Scheduled hours
+  label_assigned_issues: Assigned issues
+  info_no_scheduled_issues: Scheduled time with no scheduled issues
+  label_hours_to_schedule: Number of hours to schedule
+  label_no_issue_assigned: with no issue assigned
+  warning_to_many_scheduled_hours: You've scheduled too many hours
+  label_you_have: You have
+  label_empty_hours_left: "Empty hours left:"
+  label_used_total: Used total
+  label_used_today: Used today
+  label_toggle_deliverable: Toggle sprint column
+  label_scheduled_issues: Scheduled issues
+  label_no_scheduled_issues: No scheduled issues today
+  label_no_other_issues: No other issues today
+  label_not_scheduled_issues: Not scheduled issues
+  label_member_issues: Member issues
   button_quick_issue: Quick issue
+  button_exit: Exit
+  error_no_trackers: No tracker is associated to this project. Please check the Project settings.
+  label_no_developers_in_project: There are no developers in this project.
+  none: None
+  no_one: No one
