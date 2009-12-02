@@ -357,8 +357,7 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
           { :pid => project_id, :uid => user_id}],
         :joins => "LEFT JOIN issue_statuses ON issues.status_id = issue_statuses.id");
 
-      todaysScheduledIssues = ScheduledIssue.all(:conditions => ["user_id = ? AND date = ?
-          AND project_id = ?", user_id, date, project_id]);
+      todaysScheduledIssues = ScheduledIssue.all(:conditions => ["user_id = ? AND date = ? AND project_id = ?", user_id, date, project_id]);
 
       notScheduledIssues = Set.new
       allIssues.each do |issue|
