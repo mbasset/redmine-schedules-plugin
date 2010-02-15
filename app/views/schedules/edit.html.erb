@@ -32,20 +32,18 @@ after_submit_href = url_for(:controller => "schedules", :action => "index",
     <%= select_year(@date.year, :prefix => "year", :discard_type => true) %>
   </fieldset>
 
-  <p style="float:right; margin:0px;">
-    <%= link_to_function "&#171; #{l(:label_previous)} #{l(:label_week).downcase}",
-      "anotherWeek(#{@user.id}, '#{@date - 7}', event)", :class => "functional" %>
-    | <%= link_to_function "#{l(:label_next)} #{l(:label_week).downcase} &#187;",
-      "anotherWeek(#{@user.id}, '#{@date + 7}', event)", :class => "functional" %>
-  </p>
+   <p style="float:right; margin:0px;">
+      <%= link_to_remote ("&#171; #{l(:label_previous)} #{l(:label_week).downcase}"), {:update => "content", :url => params.merge( :date => @date - 7 )} %> |
+      <%= link_to_remote ("#{l(:label_next)} #{l(:label_week).downcase} &#187;"), {:update => "content", :url => params.merge( :date => @date + 7 )} %>
+    </p>
 
   <p class="buttons">
     <%= link_to_remote l(:button_apply),
       { :update => "content",
-      :with => "Form.serialize('date_form')"
+      :with => "Form.serialize('date_form')",
+      :url => params.delete_if {|key, value| [ "date", "day", "month", "year" ].include?(key) }
     }, :class => 'icon icon-checked' %>
   </p>
-
 <% end %>
 
 <% form_tag({:action=> "edit"}) do %>

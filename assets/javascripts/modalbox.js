@@ -165,7 +165,7 @@ function showScheduledProjects(editFieldID)
         autoFocusing: false,
         afterLoad: function(){
           updateSelectValues();
-          var editfieldValue = parseInt(_owner.value);
+          var editfieldValue = parseFloat(_owner.value);
           var scheduledValue = computeScheduledHours();
           var previousValue = previousHoursNumber();
           var emptyHours = 0;
@@ -183,10 +183,10 @@ function showScheduledProjects(editFieldID)
 
           if(null != $('emptyHours'))
           {
-            emptyHours = ($('usedHours') != null ? parseInt($('usedHours').value) : 0) - scheduledValue;
+            emptyHours = ($('usedHours') != null ? parseFloat($('usedHours').value) : 0) - scheduledValue;
           }
 
-          if(parseInt(emptyHours) < 1)
+          if(parseFloat(emptyHours) == 0)
           {
             empty_hours_number = 0;
             hideEmptyHours();
@@ -372,7 +372,7 @@ function updateWindowInnerSize(arr)
       else
       {
         $(id).setStyle({
-          height: '144px'
+          height: '137px'
         });
       }
     }
@@ -397,11 +397,11 @@ function updateWindowSize(action)
   var newT = -1;
   if(action == 'grow')
   {
-    newT = 430;
+    newT = 565;
   }
   else if(action == 'shrink')
   {
-    newT = 330;
+    newT = 466;
   }
   
   if(null != save && null != seWindow)

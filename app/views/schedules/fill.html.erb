@@ -4,6 +4,7 @@
   </h2>
 
   <p><%= l(:label_schedules_fill_description) %></p>
+  <p><b><%= l(:label_schedules_fill_description_notice)  %> </b><p>
 
   <% form_tag({:action=> "fill"}) do %>
     <%= hidden_field_tag 'project_id', @project.id %>

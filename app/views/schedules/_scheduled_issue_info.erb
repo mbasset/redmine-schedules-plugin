@@ -6,7 +6,7 @@
   <%= link_to "#" + scheduled_issue_info.issue_id.to_s, { :controller => 'issues',
     :action => 'show', :id => scheduled_issue_info.issue_id.to_s },
     { :title => (truncate scheduled_issue_info.issue.subject, :length => 30) } %>
-  <%= scheduled_issue_info.scheduled_hours.to_i.to_s %>h<br/>
+  <%= scheduled_issue_info.scheduled_hours.to_f.to_s %>h<br/>
 <% else %>
-  <%= scheduled_issue_info.scheduled_hours.to_i.to_s %>h <%= l(:label_no_issue_assigned) %> <br/>
+  <%= scheduled_issue_info.scheduled_hours.to_f.to_s %>h <%= l(:label_no_issue_assigned) %> <br/>
 <% end %>

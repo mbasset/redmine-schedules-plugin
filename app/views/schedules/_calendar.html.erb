@@ -1,16 +1,17 @@
 <% if !@focus.nil? %>
-    <div class="tabs">
-        <% url_params = { :controller => 'schedules', :date => @date } %>
-        <ul>
-            <li><%= link_to(l(:label_user_plural),
-                        url_params.merge({:action => 'users'}),
-                        :class => (@focus == 'users' ? 'selected' : nil)) %></li>
-            <li><%= link_to(l(:label_project_plural),
-                        url_params.merge({:action => 'projects'}),
-                        :class => (@focus == 'projects' ? 'selected' : nil)) %></li>
-        </ul>
-    </div>
+  <div class="tabs">
+    <% url_params = { :controller => 'schedules', :date => @date } %>
+    <ul>
+      <li><%= link_to(l(:label_user_plural),
+          url_params.merge({:action => 'users'}),
+          :class => (@focus == 'users' ? 'selected' : nil)) %></li>
+      <li><%= link_to(l(:label_project_plural),
+          url_params.merge({:action => 'projects'}),
+          :class => (@focus == 'projects' ? 'selected' : nil)) %></li>
+    </ul>
+  </div>
 <% end %>
+<% i = 0; %>
 <table class="cal schedule_entry_cal">
   <thead>
     <tr>
@@ -90,7 +91,7 @@
       <% (calendar.startdt..calendar.enddt).each do |day| %>
         <th>
           <% sum = entries_by_day[day].nil? ? 0 : entries_by_day[day].collect(&:hours).sum %>
-          <%= sum.to_i if sum > 0 %>
+          <%= sum.to_f if sum > 0 %>
           <% available_sum = @availabilities[day].nil? ? 0 : @availabilities[day].collect { |user, hours| hours }.sum.to_i %>
           <%= "<span id=\"schedule_available_#{day}\" class='schedule_available'>(#{available_sum.to_i.to_s} #{l(:label_schedules_available).downcase})</em>" if available_sum > 0 %>
         </th>

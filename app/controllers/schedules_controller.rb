@@ -127,7 +127,8 @@ class SchedulesController < ApplicationController
   #
   # # #
   def save_quick_issue
-    scheduled_hours = params[:scheduled_hours].nil? ? 0 : params[:scheduled_hours].to_i;
+    scheduled_hours = params[:scheduled_hours].nil? ? 0 : params[:scheduled_hours].to_f;
+    scheduled_hours += (params[:scheduled_minutes].to_f/100) unless params[:scheduled_minutes].nil?
     assigned_to = params[:quick_issue][:assigned_to].to_i != -1 ? 
       User.find(params[:quick_issue][:assigned_to].to_i) : nil;
     project = Project.find(params[:project_id].to_i);
@@ -145,9 +146,7 @@ class SchedulesController < ApplicationController
       :estimated_hours => removeDecimalComma(params[:quick_issue][:estimated]).to_f,
       :due_date => nil);
 
-    if(defined?(Deliverable))
-      issue.deliverable_id = params[:quick_issue][:deliverable].to_i;
-    end
+      issue.fixed_version_id = params[:quick_issue][:sprint].to_i;
 
     issue.save
 
@@ -191,7 +190,7 @@ class SchedulesController < ApplicationController
 
   def r_schedule_entry_hours
     render :text => schedule_entry_hours(params[:user_id], params[:project_id],
-      params[:date]).to_i.to_s
+      params[:date]).to_f.to_s
   end
 
   def not_empty_hours(user_id, project_id, date)
@@ -270,6 +269,8 @@ class SchedulesController < ApplicationController
   def save_scheduled_issues
     # hours scheduled for each issue
     hours = params[:hours_to_schedule];
+    #minutes scheduled for each issue
+    minutes = params[:minutes_to_schedule];
     # id of the user
     user_id = params[:user_id];
     # date in which to save
@@ -278,24 +279,32 @@ class SchedulesController < ApplicationController
     issueIds = params[:issues];
     project_id = params[:project_id];
     sum = 0;
-    
+
+        # unite hours and minutes hash tables
+    # updating hours hash table with minutes
+    if !hours.nil?
+      hours.each_key do |key|
+        hours[key] = (hours[key].to_i + minutes[key].to_f/100).to_s unless minutes[key].to_i == 0
+      end
+    end
+
     ActiveRecord::Base.transaction do
       hours.each do |key, value|
         issue = Issue.find_by_id(issueIds[key].to_i);
-        if(value.to_i != 0)
+        if(value.to_f != 0)
           sched_issue = ScheduledIssue.first(:conditions => ["issue_id = ? AND date = ?",
               issue.id, date]);
           if(sched_issue.nil?)
-            sched_issue = ScheduledIssue.create(:scheduled_hours => value.to_i,
+            sched_issue = ScheduledIssue.create(:scheduled_hours => value.to_f,
               :user_id => user_id, :date => date, :issue_id => issue.id,
               :project_id => issue.project.id);
           else
-            sched_issue.scheduled_hours = value.to_i;
+            sched_issue.scheduled_hours = value.to_f;
           end
 
           issue.assigned_to = User.find(user_id);
           issue.save;
-          sum += value.to_i;
+          sum += value.to_f;
           sched_issue.save;
         else
           ScheduledIssue.destroy_all(["issue_id = ? AND date = ? AND user_id = ?", issue.id, date, user_id]);
@@ -304,13 +313,13 @@ class SchedulesController < ApplicationController
 
       emptyHours = ScheduledIssue.emptyHours(user_id, project_id, date);
       if(emptyHours.nil?)
-        if(params[:empty_hours].to_i != 0)
+        if(params[:empty_hours].to_f != 0)
           emptyHours = ScheduledIssue.create(:user_id => user_id, :project_id => project_id,
             :date => date, :scheduled_hours => params[:empty_hours]);
           emptyHours.save;
         end
       else
-        if(params[:empty_hours].to_i != 0)
+        if(params[:empty_hours].to_f != 0)
           emptyHours.update_attribute(:scheduled_hours, params[:empty_hours]);
           emptyHours.save;
         else
@@ -319,7 +328,7 @@ class SchedulesController < ApplicationController
       end
     end
 
-    sum += params[:empty_hours].to_i
+    sum += params[:empty_hours].to_f
 
     updateScheduleEntryHours(user_id, project_id, date, sum)
 
@@ -453,15 +462,15 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
 
     if(scheduleEntry.nil?)
       scheduleEntry = ScheduleEntry.create(:project => Project.find_by_id(project_id.to_i),
-        :user => User.find_by_id(user_id.to_i), :date => date, :hours => hours.to_i)
+        :user => User.find_by_id(user_id.to_i), :date => date, :hours => hours.to_f)
       scheduleEntry.save;
 
       if(scheduleEntry.hours == 0)
         scheduleEntry.destroy;
       end
     else
-      if(hours.to_i > 0)
-        scheduleEntry.update_attribute(:hours, hours.to_i);
+      if(hours.to_f > 0)
+        scheduleEntry.update_attribute(:hours, hours.to_f);
         scheduleEntry.save;
       else
         scheduleEntry.destroy
@@ -477,9 +486,7 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
     @issue = Issue.new;
     @default_status = IssueStatus.default;
     @trackers = project.trackers;
-    if(defined?(Deliverable))
-      @deliverables = Deliverable.all(:conditions => ["project_id = ?", params[:project_id]]);
-    end
+    @sprints = Version.all(:conditions => ["project_id = ?", params[:project_id]]);
     @assigned_to = project.members.collect(&:user);
     @available_statuses = Hash.new
     @first = nil;
@@ -500,7 +507,7 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
     date = params[:date];
     user_id = params[:user_id];
     project_id = params[:project_id];
-    hours = params[:hours].to_i;
+    hours = params[:hours].to_f;
 
     if(!hours.nil? && !date.nil? && !user_id.nil? && !project_id.nil?)
       emptyHours = ScheduledIssue.first(:conditions => ["user_id = ? AND date = ?
@@ -525,7 +532,7 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
       end
     end
 
-    render :text => emptyHours.nil? ? '0' : "#{emptyHours.scheduled_hours.to_i}";
+    render :text => emptyHours.nil? ? '0' : "#{emptyHours.scheduled_hours.to_f}";
   end
 
   #
@@ -1056,9 +1063,9 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
     @projects = @projects & [@project] unless @project.nil?
     @users = visible_users(@projects.collect(&:members).flatten.uniq)
     @users = @users & [@user] unless @user.nil?
-    @users = [@user] if !@user.nil? && @users.empty? && User.current.admin?
-	deny_access if (@projects.empty? || @users.nil? || @users.empty?) && !User.current.admin?
-		
+    @users = [@user] if @users.empty? && User.current.admin?
+    deny_access if (@projects.empty? || @users.empty?) && !User.current.admin?
+        
     # Parse the given date or default to today
     @date = Date.parse(params[:date]) if params[:date]
     @date ||= Date.civil(params[:year].to_i, params[:month].to_i, params[:day].to_i) if params[:year] && params[:month] && params[:day]

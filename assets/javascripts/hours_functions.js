@@ -9,10 +9,10 @@ var saved_empty_hours_value = -1;
 /**
  *
  */
-function getSelectedValue(selectElement)
-{
-  return selectElement.options[selectElement.selectedIndex].value;
-}
+//function getSelectedValue(selectElement)
+//{
+//  return selectElement.options[selectElement.selectedIndex].value;
+//}
 
 /**
  * Retrieve number of empty hours
@@ -39,7 +39,7 @@ function previousHoursNumber()
 {
   var previousHours = $('previouslyUsed');
 
-  return previousHours == null ? 0 : parseInt(previousHours.value);
+  return previousHours == null ? 0 : parseFloat(previousHours.value);
 }
 
 /**
@@ -58,7 +58,7 @@ function getVisibleUsedHours()
 {
   var usedHours = $('usedHours');
 
-  return usedHours == null ? 0 : (isNaN(usedHours.value) ? 0 : parseInt(usedHours.value));
+  return usedHours == null ? 0 : (isNaN(usedHours.value) ? 0 : parseFloat(usedHours.value));
 }
 
 /**
@@ -73,7 +73,7 @@ function setUsedHours(val)
 
 function saveEmptyHours()
 {
-  var hours = parseInt($('usedHours').value) - computeScheduledHours();
+  var hours = parseFloat($('usedHours').value) - computeScheduledHours();
 
   var params = idToParams(_owner.id) + "&hours=" + hours.toString() +
   "&hours_to_schedule=" + $('usedHours').value;
@@ -166,7 +166,7 @@ function updateEmptyHours()
   {
     $('usedHours').value = '0';
   }
-  var usedHoursValue = isNaN($('usedHours').value) ? 0 : parseInt($('usedHours').value);
+  var usedHoursValue = isNaN($('usedHours').value) ? 0 : parseFloat($('usedHours').value);
   empty_hours_number = usedHoursValue - computeScheduledHours();
   if(!isNaN(empty_hours_number) && empty_hours_number > 0)
   {
@@ -212,7 +212,7 @@ function getScheduledEntryHours()
   var scheduleEntryHours = $('schedule_entry_hours');
 
   return scheduleEntryHours == null ? 0 : 
-  isNaN(scheduleEntryHours.value) ? 0 : parseInt(scheduleEntryHours.value);
+  isNaN(scheduleEntryHours.value) ? 0 : parseFloat(scheduleEntryHours.value);
 }
 
 function updateScheduledHours(owner_id, first)
@@ -230,11 +230,11 @@ function updateScheduledHours(owner_id, first)
     }
     var i = 1;
 
-    var scheduledHours = computeScheduledHours();
-    var emptyHours = getEmptyHours();
-    var usedHours = getVisibleUsedHours();
+    var scheduledHours = computeScheduledHours(); //changed
+    var emptyHours = getEmptyHours(); // getter from field (float value)
+    var usedHours = getVisibleUsedHours(); // getter from field (float value)
     var usedHoursInput = $('usedHours');
-    var scheduleEntryHours = getScheduledEntryHours();
+    var scheduleEntryHours = getScheduledEntryHours(); // value passed from hiddenfield created by controller, assigned form db scheduleEntries
 
     if(scheduledHours < usedHours)
     {
@@ -247,7 +247,7 @@ function updateScheduledHours(owner_id, first)
           if(emptyHours > 0)
           {
             showEmptyHours(emptyHours);
-            empty_hours_number = parseInt(emptyHours);
+            empty_hours_number = parseFloat(emptyHours);
           }
           else
           {
@@ -286,7 +286,7 @@ function updateScheduledHours(owner_id, first)
           if(emptyHours > 0)
           {
             showEmptyHours(emptyHours);
-            empty_hours_number = parseInt(emptyHours)
+            empty_hours_number = parseFloat(emptyHours)
           }
           else
           {
@@ -335,7 +335,7 @@ function updateScheduledHours(owner_id, first)
   _owner.value = usedHoursInput.value;
   if(null != $('usedTotal'))
   {
-    $('usedTotal').innerHTML = (usedHoursInput.value == '' ? 0 : parseInt(usedHoursInput.value)) + previousHoursNumber();
+    $('usedTotal').innerHTML = (usedHoursInput.value == '' ? 0 : parseFloat(usedHoursInput.value)) + previousHoursNumber();
   }
 
   showWarning();
@@ -356,7 +356,7 @@ function updateTotalDayHours()
     var target = $('total_' + date);
     date = date.replace(/^(\d{4}).(\d{2}).(\d{2})/, "$1\\-$2\\-$3");
     var sum = scheduledHoursForDay(date);
-    if(parseInt(sum) == 0)
+    if(parseFloat(sum) == 0)
     {
       sum = '';
     }
@@ -379,7 +379,7 @@ function totalDayHours(date)
   {
     if(null != $(elements[i]).value && $(elements[i]).value!=0)
     {
-      sum += parseInt($(elements[i]).value);
+      sum += parseFloat($(elements[i]).value);
     }
   }
 
@@ -417,27 +417,27 @@ function scheduledHoursForDay(date)
  * @cellOwner id of cell of the day we schedule now
  *
  */
-function activateScheduledHours(owner)
-{
-  var dropdown = $(owner.id.replace(/^scheduled_(.+)$/, "hours_to_schedule_$1"));
-
-  if(dropdown)
-  {
-    if(owner.checked)
-    {
-      if(dropdown.hasAttribute('disabled'))
-      {
-        dropdown.removeAttribute('disabled');
-      }
-    }
-    else
-    {
-      dropdown.setAttribute('disabled', 'disabled');
-    }
-  }
-
-  updateScheduledHours(_owner);
-}
+//function activateScheduledHours(owner)
+//{
+//  var dropdown = $(owner.id.replace(/^scheduled_(.+)$/, "hours_to_schedule_$1"));
+//
+//  if(dropdown)
+//  {
+//    if(owner.checked)
+//    {
+//      if(dropdown.hasAttribute('disabled'))
+//      {
+//        dropdown.removeAttribute('disabled');
+//      }
+//    }
+//    else
+//    {
+//      dropdown.setAttribute('disabled', 'disabled');
+//    }
+//  }
+//
+//  updateScheduledHours(_owner);
+//}
 
 /**
  * Computes scheduled hours from dropdowns in the window
@@ -454,10 +454,20 @@ function computeScheduledHours()
     for(i=1; i<issues.length+1; i++)
     {
       hours = $('hours_to_schedule_' + i);
-
+      minutes = $('minutes_to_schedule_' + i);
       if(hours != null)
       {
-        totalScheduled += parseInt(getSelectedValue(hours));
+        _minutes = parseFloat(minutes.options[minutes.selectedIndex].value);
+        if ( _minutes != 0 )
+          {
+            totalScheduled +=  (parseFloat(hours.options[hours.selectedIndex].value) // hours
+                                          + (_minutes/100) // minutes selectbox values converted to decimal (0.value)
+                                          );
+          }
+        else
+          {
+            totalScheduled += parseFloat(hours.options[hours.selectedIndex].value);
+          }
       }
     }
 

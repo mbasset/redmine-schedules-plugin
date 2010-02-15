@@ -42,8 +42,9 @@ class ScheduledIssue < ActiveRecord::Base
   #
   def ScheduledIssue.currentIssues(project_id, user_id)
     return Issue.all(:conditions => ["project_id = ?
-      AND assigned_to_id IN (?) AND status_id <> 33",
-        project_id, user_id]);
+      AND assigned_to_id IN (?) AND #{IssueStatus.table_name}.is_closed = 0",
+        project_id, user_id],
+      :joins => "LEFT JOIN issue_statuses ON #{Issue.table_name}.status_id = #{IssueStatus.table_name}.id");
   end
 
   #
@@ -87,7 +88,6 @@ class ScheduledIssue < ActiveRecord::Base
   def ScheduledIssue.previouslyUsedHours(user_id, project_id, date)
     scheduledIssues = ScheduledIssue.all(:conditions => ["date = ? AND user_id = ?
         AND project_id <> ? ", date, user_id, project_id]);
-    RAILS_DEFAULT_LOGGER.debug "!!!!!!!!!!!!!!!!!!!#{scheduledIssues.inspect}!!!!!!!!!!!!!!!!!!!!!!!!!"
     if(!scheduledIssues.nil? && !scheduledIssues.empty?)
       hours = scheduledIssues.sum(&:scheduled_hours)
     else

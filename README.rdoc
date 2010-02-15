@@ -3,7 +3,6 @@
 The Schedules plugin allows allocating users to projects and track this allocation in time. 
 Allocation process can be done by simply scheduling to member a number of hours for a given day in a particular project, or can base on the time previously booked for tickets assigned to a user.
 
-
 == Features
 
 * User availability interface
@@ -38,18 +37,19 @@ To set users' availability click on the link on the right hand side in "My sched
 Edit panel allows addingg hours, or issues to a user's daily schedule. The work plan can be set for the upcoming weeks with the use of "Next week" button.
 
 === Scheduled issues window
+
 This window contains several important sections:
 * Hours editing field (visible as a textbox at the top of the window), where hours can be added to the day schedule
 * Scheduled issues section, where all scheduled issues can be found
 * Not scheduled issues section, where all issues assigned to the user can be found
 * Member issues section, where all issues from a given project can be found
+====(In newes version it is possible to log minutes to the ticket in this window)
 
 === Quick issue window
 This window allows creating the new issue with basic data. It can be instantly scheduled to any user in the project, without the need to leave the window.
 
 === Bulk schedules
 In this pane all allowed projects, and users from these project are displayed.
-
 
 == Licence
 
@@ -58,6 +58,13 @@ This plugin is licensed under the GNU GPL v2.  See COPYRIGHT.txt and GPL.txt for
 == Authored by:
 * Base code: Brad Beattie, Gossamer Threads Inc. (http://www.gossamer-threads.com)
 * Developed by: GOYELLO.com
+
+== Credits:
+Thanks go to the following people for patches and contributions:
+Antono 
+Standout 
+Rjrodger 
+
 
 == Other information
 This version of a plugin is not using Holidays gem, and it requires Redmine 0.8.4 or above.

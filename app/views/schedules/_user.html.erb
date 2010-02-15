@@ -65,7 +65,7 @@ closed_entries = @closed_entries.index_by {|entry| entry.date.ajd}
         <th id="total_<%= day.to_s %>" class="even<%= ' today' if Date.today == day %>">
           <% sum = @entries.collect {|e| e.hours if e.date == day }.compact.sum %>
           <% sum += closed_entries[day.ajd].hours unless closed_entries[day.ajd].nil? %>
-          <%= sum.to_i if sum > 0 %>
+          <%= sum.to_f if sum > 0 %>
         </th>
       <% end %>
     </tr>

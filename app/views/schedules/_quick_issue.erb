@@ -36,18 +36,16 @@ end
         </td>
       </tr>
 
-      <% if(defined?(Deliverable) && !@deliverables.empty?) %>
         <tr>
           <td>
-            <label><%= l(:label_field_deliverable) %>:</label>
-            <%= select_tag 'quick_issue[deliverable]',
-              options_for_select([[l(:none), -1]] + @deliverables.collect{|d|
-                [d.deliverable_subject.slice(0, 25), d.id]}),
-              :title => l(:label_field_deliverable),
+            <label><%= l(:label_field_sprint) %>:</label>
+            <%= select_tag 'quick_issue[sprint]',
+              options_for_select([[l(:none), -1]] + @sprints.collect{|d|
+                [d.name.slice(0, 25), d.id]}),
+              :title => l(:label_field_sprint),
               :onchange => "quick_issue_edited = true", :tabindex => 102 %>
           </td>
         </tr>
-      <% end %>
         
       <% if(!@assigned_to.empty?) %>
         <tr>
@@ -63,10 +61,14 @@ end
       <tr>
         <td>
           <label><%= l(:label_hours_to_schedule) %></label><br/>
-          <%= select_tag 'scheduled_hours',
+            <%= select_tag 'scheduled_hours',
             options_for_select((0..12).collect{|d| [d.to_s, d]}, 0),
             :title => l(:label_hours_to_schedule),
             :onchange => "quick_issue_edited = true", :tabindex => 104 %>
+          <%= select_tag 'scheduled_minutes',
+            options_for_select((0..3).collect{|d| [(d*25).to_s, d*25]}, 0),
+            :title => l(:label_hours_to_schedule),
+            :onchange => "quick_issue_edited = true", :tabindex => 105 %>
         </td>
       </tr>
       <tr>
@@ -83,7 +85,7 @@ end
             :title => l(:field_subject), :onfocus => "edited_value = this.value;",
             :onblur => "if(edited_value != this.value) quick_issue_edited = true; edited_value = null;",
             :style => "width: 90%",
-            :tabindex => 106 %>
+            :tabindex => 107 %>
         </td>
       </tr>
       <tr>
@@ -93,15 +95,15 @@ end
             :title => l(:field_description),
             :onfocus => "edited_value = this.value;",
             :onblur => "if(edited_value != this.value) quick_issue_edited = true;",
-            :tabindex => 107 %>
+            :tabindex => 108 %>
         </td>
       </tr>
 
       <tr>
         <td><span id="saveCell"><%= button_to_function l(:button_save), "saveQuickIssue(this.form, true)",
-            :id => 'quickIssueButton', :tabindex => 108 %></span>
+            :id => 'quickIssueButton', :tabindex => 109 %></span>
           <%= button_to_function l(:button_cancel), 'gy_focus = false; cancelQuickIssue();',
-            :tabindex => 109, :id => 'cancel_qi_button' %>
+            :tabindex => 111, :id => 'cancel_qi_button' %>
         </td>
       </tr>
     </table>

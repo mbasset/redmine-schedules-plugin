@@ -1,4 +1,4 @@
-﻿/* 
+/* 
     Document   : schedule_tickets
     Created on : 2009-06-24, 12:20:28
     Author     : mkluczka
@@ -28,7 +28,7 @@
   z-index: 10001;
   background: #fff;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0.02)";
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0.02);
+  filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0.02)";
   opacity: 0.02;
 }
 
@@ -54,7 +54,7 @@
   width: 220px;
   height: auto;
   border: 0px solid black;
-  z-index: 10002;
+  z-index: 10012;
   	background-color: #EFEFEF;
 	color: #000;
 		-webkit-border-bottom-left-radius: 4px;
@@ -94,7 +94,7 @@
 
 .scheduledTicket {
   background: #eee none repeat scroll 0 0;
-  width: 336px;
+  width: 480px;
   z-index: 91;
   border:1px solid #CCCCCC;
   height:130px;
@@ -146,6 +146,13 @@
   width: 50px;
 }
 
+.minutes_to_schedule_select {
+  margin-left: 2px;
+  margin-right: 2px;
+  text-align: left;
+  width: 50px;
+}
+
 .issuesDiv {
   overflow: auto;
   height: 25px;
@@ -165,11 +172,11 @@
 
 tr.issue td.subject {
   white-space: normal;
-  min-width: 185px;
+  min-width: 175px;
   max-width: 185px;
 }
 
-tr.issue td.deliverable {
+tr.issue td.sprint {
   max-width: 85px;
   min-width: 85px;
   white-space: normal;
@@ -186,7 +193,8 @@ display:block;
 line-height:25px;
 margin:0 -5px;
 padding:0 5px;
-text-decoration:none;  background: #ddd none repeat scroll 0 0;
+text-decoration:none;  
+background: #467AA7 repeat scroll 0 0;
 }
 
 .memberTable {
@@ -206,8 +214,27 @@ top:2px;
 float:none !important;
 }
 
-.issuesDiv, .memberTable {
+.issuesDiv {
+margin:0 -5px;
+background-color:#DDDDDD;
+}
+.memberTable {
 margin:0 -5px;
 padding:0 5px;
-background:white;
+background-color:#DDDDDD;
+}
+#sep-bar{
+height:3px;
+}
+input#usedHours, #scheduledTicket select{
+border:1px solid #999;
+padding:2px;
+width:43px;
+		-webkit-border-bottom-radius: 3px;
+		-moz-border-radius: 3px;
+		border-radius: 3px;
+		
+}
+#unassignedIssues {
+background-color:#DDDDDD;
 }

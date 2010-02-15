@@ -11,17 +11,22 @@
   label_schedule_edit: Edycja harmonogramu dla %s
   label_schedules_fill: Wypelnij harmonogram
   label_schedules_fill_description: This tool will help you fill up a project's schedule with available hours for the specified users. Simply specify the maximum number of hours you want each user to work on this project per day, the total number of hours to populate, and submit the form. Available time for each user will be consumed to satisfy your specifications.
+  label_schedules_fill_description_notice: PamiÄ™taj aby wypeÅ‚niÄ‡ pole CaÅ‚kowitej iloÅ›ci godzin, bez tego nie bÄ™dzie moÅ¼na uzupeÅ‚nianiÄ‡ grafika.
   label_schedules_fill_week_header: Maksymalna ilosc godzin do wykorzystania na dzien
   label_schedules_fill_total_header: Calkowita ilosc godzin do przypisania
+  label_field_sprint: Sprint
   label_user_schedule: "%s harmonogram"
   label_project_schedule: Harmonogram projektu
   label_schedules_available: Dostepne
   label_schedules_unavailable: Niedostepne
   label_availability_schedule: Harmonogram dostepnosci
-  label_scheduled_vs_spent_time: Czas spêdzony vs. harmonogram
+  label_scheduled_vs_spent_time: Czas spï¿½dzony vs. harmonogram
   label_global_schedule: Wszystkie harmonogramy
+  label_schedules_spent: SpÄ™dzono
   label_schedules_estimate: Wyestymuj
+  label_schedules_estimated: Wyestymowane
   label_schedules_estimate_updated: Zagadnienia i daty wersji zaktualizowane.
+  label_hours_to_select: Godziny/Minuty
   error_schedules_not_enabled: Modul harmonogramow niedostepny
   error_schedules_estimate_unestimated_issues: Upewnij sie ze wszystkie zagadnienia w tej wersji maja wyestymowany czas.
   error_schedules_estimate_unassigned_issues: Upewnij sie ze wszyskie zagadnienia w tej wersji sa przypisane do uzytkownikow.
@@ -31,30 +36,3 @@
   button_schedules_edit: Edytuj harmonogram
   button_schedules_default_edit: Edytuj domyslna dostepnosc
   button_schedules_fill: Wypelnij harmonogram
-  label_checkbox_all: Wszystkie
-  label_checkbox_unassigned: Nieprzypisane
-  label_field_deliverable: Sprint
-  label_available_hours: Dostêpne godziny
-  label_scheduled_hours: Zaplanowane godziny
-  label_assigned_issues: Przypisane zagadnienia
-  info_no_scheduled_issues: Czas zaplanowany, bez przypisanych zagadnien
-  label_hours_to_schedule: Liczba godzin do zaplanowania
-  label_no_issue_assigned: bez przypisanych zagadnieñ
-  warning_to_many_scheduled_hours: Zaplanowa³es zbyt wiele godzin
-  label_you_have: Masz
-  label_empty_hours_left: nieprzypisanych godzin
-  label_used_total: £¹cznie zu¿yto
-  label_used_today: Zu¿ytych dzisiaj
-  label_toggle_deliverable: Poka¿/schowaj kolumnê sprint
-  label_toggle_version: Poka¿/schowaj kolumnê wersja
-  label_scheduled_issues: Zaplanowane zagadnienia
-  label_no_scheduled_issues: Brak zaplanowanych na dziœ zagadnieñ
-  label_no_other_issues: Brak innych zagadnieñ
-  label_not_scheduled_issues: Niezaplanowane zagadnienia
-  label_member_issues: Zagadnienia innych osób
-  button_quick_issue: Szybkie tworzenie zagadnienia
-  button_exit: WyjdŸ
-  error_no_trackers: Brak zagadnieñ zwi¹zanych z tym projektem. Proszê sprawdŸ ustawienia projektu.
-  label_no_developers_in_project: W tym projekcie nie ma programistów.
-  none: Brak
-  no_one: Brak przypisania

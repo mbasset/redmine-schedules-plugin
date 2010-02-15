@@ -5,7 +5,7 @@
 
 var edited = null;
 var parentCell = null;
-var deliverableCheckbox = false;
+var sprintCheckbox = false;
 var versionCheckbox = false;
 var schedIssVisible = false;
 var notSchedIssVisible = false;
@@ -15,20 +15,32 @@ var _owner = null;
 var remote = false;
 var functionalClicked = false;
 
-function updateSelectValues()
-{
-  $$('.hours_to_schedule_values').each(function(element){
-    element = $(element);
-    if(/^hours_to_schedule_value_[0-9]+$/.test(element.id))
-    {
-      var number = element.id.replace(/^hours_to_schedule_value_([0-9]+)$/, "$1");
-      if(number.match(/^[0-9]+$/))
+  function updateSelectValues()
+  {
+    $$('.hours_to_schedule_values').each(function(element){
+      element = $(element);
+      if(/^hours_to_schedule_value_[0-9]+$/.test(element.id))
       {
-        $('hours_to_schedule_' + number).value = element.value;
+        var number = element.id.replace(/^hours_to_schedule_value_([0-9]+)$/, "$1");
+        if(number.match(/^[0-9]+$/))
+        {
+          $('hours_to_schedule_' + number).value = element.value;
+        }
       }
-    }
-  })
-}
+    })
+    $$('.minutes_to_schedule_values').each(function(element){
+      element = $(element);
+      if(/^minutes_to_schedule_value_[0-9]+$/.test(element.id))
+      {
+        var number = element.id.replace(/^minutes_to_schedule_value_([0-9]+)$/, "$1");
+        if(number.match(/^[0-9]+$/))
+        {
+          $('minutes_to_schedule_' + number).value = element.value;
+        }
+      }
+    })
+
+  }
 
 function updateSelectValue(select_id, value)
 {
@@ -58,23 +70,20 @@ function saveSchedule(form)
 
 function saveColumnVisibility()
 {
-  deliverableCheckbox = null != $('deliverableCheckbox') ?
-  $('deliverableCheckbox').checked : false;
-
-  versionCheckbox = null != $('versionCheckbox') ?
-  $('versionCheckbox').checked : false;
+  sprintCheckbox = null != $('sprintCheckbox') ?
+  $('sprintCheckbox').checked : false;
 }
 
 function updateColumnVisibility()
 {
-  if(null != $('deliverableCheckbox'))
+  if(null != $('sprintCheckbox'))
   {
-    deliverableCheckbox = null == deliverableCheckbox ? false : deliverableCheckbox;
-    $('deliverableCheckbox').checked = deliverableCheckbox;
+    sprintCheckbox = null == sprintCheckbox ? false : sprintCheckbox;
+    $('sprintCheckbox').checked = sprintCheckbox;
 
-    if(deliverableCheckbox == true)
+    if(sprintCheckbox == true)
     {
-      showColumn('deliverable');
+      showColumn('sprint');
     }
   }
 }
@@ -367,13 +376,13 @@ function fetchMemberIssues(form, date)
     });
   }
 
-  if(null != $('deliverableCheckbox'))
+  if(null != $('sprintCheckbox'))
   {
-    if($('deliverableCheckbox').checked){
-      showColumn('deliverable');
+    if($('sprintCheckbox').checked){
+      showColumn('sprint');
     }else
     {
-      hideColumn('deliverable');
+      hideColumn('sprint');
     }
   }
 

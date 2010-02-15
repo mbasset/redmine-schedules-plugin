@@ -9,12 +9,12 @@ schedHours = ScheduledIssue.hours(entry.user.id, entry.project.id, entry.date);
            :date => entry.date, :project_id => entry.project if @project.nil?%>
     <br/>
     <% if !@user.nil? && avaHours > 0 %>
-      <label><%= l(:label_available_hours) %>: </label><%= avaHours.to_i.to_s %><br/>
+      <label><%= l(:label_available_hours) %>: </label><%= avaHours.to_f.to_s %><br/>
     <% end %>
 
     <% if schedHours > 0 %>
       <br/>
-      <label><%= l(:label_scheduled_hours) %>: </label><%= schedHours.to_i %><br/>
+      <label><%= l(:label_scheduled_hours) %>: </label><%= schedHours.to_f %><br/>
       <% if !ScheduledIssue.notEmpty?(entry.user.id, entry.project.id, entry.date) %>
       <span id="scheduled_info_link" class="scheduled_info_link" style="text-decoration: underline; color: blue; cursor: pointer"
             onclick="scheduledIssuesInfo('<%= entry.date %>', '<%= entry.user.id %>', '<%= entry.project.id %>', event)">
