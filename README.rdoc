@@ -44,8 +44,8 @@ This window contains several important sections:
 * Scheduled issues section, where all scheduled issues can be found
 * Not scheduled issues section, where all issues assigned to the user can be found
 * Member issues section, where all issues from a given project can be found
-====(In newes version it is possible to log minutes to the ticket in this window)
-
+==== (In newes version it is possible to log minutes to the ticket in this window)
+==== (Be advised that in Hours editing field you can use only dot ('.') separator when assigning float value)
 === Quick issue window
 This window allows creating the new issue with basic data. It can be instantly scheduled to any user in the project, without the need to leave the window.
 
