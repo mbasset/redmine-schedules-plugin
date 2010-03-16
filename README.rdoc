@@ -1,11 +1,13 @@
-= GOYELLO Redmine Schedules
+= Redmine Schedules
 
 The Schedules plugin allows allocating users to projects and track this allocation in time. 
 Allocation process can be done by simply scheduling to member a number of hours for a given day in a particular project, or can base on the time previously booked for tickets assigned to a user.
 
-== Requiremnets
+I forked it from the GOYELLO folks plugin - we loved the improvements they made, but we have a funky time sheet interfacing problem that means we need to schedule based on high level 'activity' issues rather than the customer raised cases..
 
-This plugin was tested on Redmine 0.9.2 on Windows Vista - Webrick, and Gentoo - Mongrel configuration.
+== Requirements
+
+This plugin was tested on Redmine 0.9.2 on linux (Fedora 12) under webbrick and thin.
 
 == Features
 
@@ -20,7 +22,8 @@ This plugin was tested on Redmine 0.9.2 on Windows Vista - Webrick, and Gentoo -
 == Installation and Setup
 
 * Follow the Redmine instrucions http://www.redmine.org/wiki/redmine/Plugins 
-==== REMEMBER to change plugin folder name to /plugins/redmine_goyello_schedules
+
+==== REMEMBER to change plugin folder name to /plugins/redmine_schedules
 * Log in as an administrator, set permissions for Roles and enable modules in projects 
 * Click the Schedule link in the top left menu
 
