@@ -19,7 +19,6 @@ class ScheduleEntry < ActiveRecord::Base
 	end
 	
 	def <=>(other)
-    return 0 
 		if self.project != other.project
 			self.project <=> other.project
 		else

@@ -364,11 +364,9 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
       #
       # get Tracker from settings
       default_tracker_id = Setting.plugin_redmine_schedules['tracker'].to_s
- #     default_tracker = Tracker.find(:first, :conditions => [ "name = ?", default_tracker_name])
- #     default_tracker_id = default_tracker.id
+
       allIssues = Issue.all(:conditions => ["issues.project_id = :pid AND
         issue_statuses.is_closed = 0 AND trackers.id = " + default_tracker_id,
-#        issues.assigned_to_id = :uid AND issue_statuses.is_closed = 0",
           { :pid => project_id, :uid => user_id}],
         :joins => "LEFT JOIN issue_statuses ON issues.status_id = issue_statuses.id LEFT JOIN trackers on issues.tracker_id = trackers.id");
 
