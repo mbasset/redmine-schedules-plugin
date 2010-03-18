@@ -571,7 +571,7 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
 
     if(@@remote == true)
       @@remote = false;
-      return render_to_string :partial => 'scheduled_ticket';
+      return render_to_string(:partial => 'scheduled_ticket');
     else
       render :partial => 'scheduled_ticket' and return;
     end
