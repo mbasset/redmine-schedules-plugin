@@ -1164,7 +1164,7 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
   def is_involved(project)
     project.memberships.each do |m|
       if m.user == User.current
-        m.user.roles.each do |r|
+        m.roles.each do |r|
           return true if ["Manager", "Developer", "Client", "Technical leader"].include? r.name
         end
         return false
