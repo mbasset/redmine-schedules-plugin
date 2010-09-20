@@ -44,8 +44,7 @@ class SchedulesController < ApplicationController
   def self.visible_projects
     Project.find(:all, :conditions => Project.allowed_to_condition(User.current, :view_schedules))
   end
-    
-    
+   
   # Return a list of the users in the given projects which have permission to
   # view schedules
   def self.visible_users(members)
@@ -977,8 +976,9 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
   def get_entries(project_restriction = true)
     restrictions = "(date BETWEEN '#{@calendar.startdt}' AND '#{@calendar.enddt}')"
     restrictions << " AND user_id = " + @user.id.to_s unless @user.nil?
+    @filtered_projects = filtered_visible_projects
     if project_restriction
-      restrictions << " AND project_id IN ("+@projects.collect {|project| project.id.to_s }.join(',')+")" unless @projects.empty?
+      restrictions << " AND project_id IN (" + @filtered_projects.collect {|project| project.id.to_s }.join(',') + ")" unless @filtered_projects.empty?
       restrictions << " AND project_id = " + @project.id.to_s unless @project.nil?
     end
     ScheduleEntry.find(:all, :conditions => restrictions)
@@ -1153,5 +1153,22 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
   end
   def visible_users(members)
     self.class.visible_users(members)
+  end
+  def filtered_visible_projects
+    filtered = []
+    @projects.each do |p| 
+      filtered << p if is_involved(p)
+    end
+    filtered
+  end
+  def is_involved(project)
+    project.memberships.each do |m|
+      if m.user == User.current
+        m.user.roles.each do |r|
+          return true if ["Manager", "Developer", "Client", "Technical leader"].include? r.name
+        end
+        return false
+      end
+    end
   end
 end
