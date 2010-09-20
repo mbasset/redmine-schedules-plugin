@@ -165,7 +165,7 @@ var already_visible = false;
  */
 function showQuickIssue()
 {
-  new Ajax.Updater('quickIssueContent', '/schedules/render_quick_issue', {
+  new Ajax.Updater('quickIssueContent', '/redmine/schedules/render_quick_issue', {
     asynchronous: true,
     evalScripts: true,
     onComplete:function(){
@@ -263,7 +263,7 @@ function saveQuickIssue(form, save)
 {
   saveVisibility();
   
-  new Ajax.Updater('scheduledTicket', '/schedules/save_quick_issue', {
+  new Ajax.Updater('scheduledTicket', '/redmine/schedules/save_quick_issue', {
     method: 'get',
     asynchronous: true,
     evalScripts: true,

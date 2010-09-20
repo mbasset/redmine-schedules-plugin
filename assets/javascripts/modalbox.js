@@ -150,7 +150,7 @@ function showScheduledProjects(editFieldID)
     }
   }
 
-  new Ajax.Updater('scheduledTicket', '/schedules/scheduled_tickets', {
+  new Ajax.Updater('scheduledTicket', '/redmine/schedules/scheduled_tickets', {
     asynchronous:true,
     evalScripts:true,
     onComplete:function(){

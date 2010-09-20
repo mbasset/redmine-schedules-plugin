@@ -218,7 +218,7 @@ function setAllChecked(project_id, user_id, owner_id)
 
     $('none_ChB').checked = false;
     
-    new Ajax.Updater('unassignedIssues', '/schedules/fetchAllMembersIssues', {
+    new Ajax.Updater('unassignedIssues', '/redmine/schedules/fetchAllMembersIssues', {
       method: 'post',
       asynchronous:true,
       evalScripts:true,
@@ -252,7 +252,7 @@ function fetchUnassignedIssues(i)
     params = "project_id=" + parseInt($('project_id_hiddn').value) + "&i=" + i;
   }
 
-  new Ajax.Updater('unassignedIssues','/schedules/fetchUnassignedIssues', {
+  new Ajax.Updater('unassignedIssues','/redmine/schedules/fetchUnassignedIssues', {
     method: 'post',
     asynchronous:false,
     evalScripts:true,
@@ -309,7 +309,7 @@ function setNoneChecked()
 function saveScheduledIssues(form)
 {
   saved = false;
-  new Ajax.Request('/schedules/save_scheduled_issues', {
+  new Ajax.Request('/redmine/schedules/save_scheduled_issues', {
     asynchronous:true,
     evalScripts:true,
     onComplete:function()
@@ -358,7 +358,7 @@ function fetchMemberIssues(form, date)
 {
   var i = $$('div#scheduledIssues td.logtime').length + $$('div#notScheduledIssues td.logtime').length + 1;
 
-  new Ajax.Updater('unassignedIssues', '/schedules/fetchMemberIssues', {
+  new Ajax.Updater('unassignedIssues', '/redmine/schedules/fetchMemberIssues', {
     asynchronous: false,
     evalScripts: true,
     parameters:Form.serialize(form) + "&i=" + i + "&date=" + date
@@ -395,7 +395,7 @@ function fetchMemberIssues(form, date)
 function scheduledIssuesInfo(date, user_id, project_id, e)
 {
   var pos = getMouseXY(e)
-  new Ajax.Updater('scheduled_issue_info', '/schedules/scheduled_issues_for_project', {
+  new Ajax.Updater('scheduled_issue_info', '/redmine/schedules/scheduled_issues_for_project', {
     method: 'post',
     asynchronous:false,
     evalScripts:true,
