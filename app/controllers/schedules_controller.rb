@@ -62,7 +62,8 @@ class SchedulesController < ApplicationController
   # View the schedule for the given week/user/project
   def index
     unless @users.empty?
-      @filtered_users = filtered_users
+      filtered_visible_projects
+      filtered_users 
       @entries = get_entries
       @availabilities = get_availabilities
       render :action => 'index', :layout => !request.xhr?
@@ -102,6 +103,8 @@ class SchedulesController < ApplicationController
 
   # Edit the schedule for the given week/user/project
   def edit
+    filtered_visible_projects
+    filtered_users
     @entries = get_entries
     @closed_entries = get_closed_entries
   
@@ -977,7 +980,6 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
   def get_entries(project_restriction = true)
     restrictions = "(date BETWEEN '#{@calendar.startdt}' AND '#{@calendar.enddt}')"
     restrictions << " AND user_id = " + @user.id.to_s unless @user.nil?
-    @filtered_projects = filtered_visible_projects
     if project_restriction
       restrictions << " AND project_id IN (" + @filtered_projects.collect {|project| project.id.to_s }.join(',') + ")" unless @filtered_projects.empty?
       restrictions << " AND project_id = " + @project.id.to_s unless @project.nil?
@@ -1156,11 +1158,13 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
     self.class.visible_users(members)
   end
   def filtered_visible_projects
-    filtered = []
-    @projects.each do |p| 
-      filtered << p if is_involved(p, User.current)
+    if @filtered_projects.nil?
+      filtered = []
+      @projects.each do |p| 
+        filtered << p if is_involved(p, User.current)
+      end
+      @filtered_projects = filtered
     end
-    filtered
   end
   def is_involved(project, user)
     project.memberships.each do |m|
@@ -1173,10 +1177,14 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
     end
   end
   def filtered_users
-    filtered = []
-    @project.memberships.each do |m|
-      filtered << m.user if is_involved(@project, m.user)
+    if @project.nil?
+      @filtered_users = @users
+    else
+      filtered = []
+      @project.memberships.each do |m|
+        filtered << m.user if is_involved(@project, m.user)
+      end
+      @filtered_users = filtered
     end
-    filtered
   end
 end
