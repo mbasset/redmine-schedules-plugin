@@ -62,6 +62,7 @@ class SchedulesController < ApplicationController
   # View the schedule for the given week/user/project
   def index
     unless @users.empty?
+      @filtered_users = filtered_users
       @entries = get_entries
       @availabilities = get_availabilities
       render :action => 'index', :layout => !request.xhr?
@@ -1022,7 +1023,7 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
     availabilities = Hash.new
     (@calendar.startdt..@calendar.enddt).each do |day|
       availabilities[day] = Hash.new
-      @users.each do |user|
+      @filtered_users.each do |user|
         availabilities[day][user.id] = 0
         availabilities[day][user.id] = defaults_by_user[user.id].weekday_hours[day.wday] unless defaults_by_user[user.id].nil?
         availabilities[day][user.id] -= entries_by_user[user.id][day].collect {|entry| entry.hours }.sum unless entries_by_user[user.id].nil? || entries_by_user[user.id][day].nil?
@@ -1157,18 +1158,25 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
   def filtered_visible_projects
     filtered = []
     @projects.each do |p| 
-      filtered << p if is_involved(p)
+      filtered << p if is_involved(p, User.current)
     end
     filtered
   end
-  def is_involved(project)
+  def is_involved(project, user)
     project.memberships.each do |m|
-      if m.user == User.current
+      if m.user == user
         m.roles.each do |r|
           return true if ["Manager", "Developer", "Client", "Technical leader"].include? r.name
         end
         return false
       end
     end
+  end
+  def filtered_users
+    filtered = []
+    @project.memberships.each do |m|
+      filtered << m.user if is_involved(@project, m.user)
+    end
+    filtered
   end
 end

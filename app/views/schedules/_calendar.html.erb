@@ -26,10 +26,10 @@
 
       if @focus == "users"
         schedule_entries_by_focus = @entries.group_by {|entry| entry.user_id}
-        focus_objects = @users
+        focus_objects = @filtered_users
       else
         schedule_entries_by_focus = @entries.group_by {|entry| entry.project_id}
-        focus_objects = @projects
+        focus_objects = @filtered_projects
       end
 
       focus_objects.each do |focus_object|
