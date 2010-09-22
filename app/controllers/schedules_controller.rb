@@ -1167,6 +1167,7 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
     end
   end
   def is_involved(project, user)
+    return false unless user.status == User::STATUS_ACTIVE
     project.memberships.each do |m|
       if m.user == user
         m.roles.each do |r|
