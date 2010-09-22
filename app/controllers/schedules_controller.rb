@@ -1175,6 +1175,7 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
         return false
       end
     end
+    return false
   end
   def filtered_users
     if @project.nil?
