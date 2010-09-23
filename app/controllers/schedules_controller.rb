@@ -58,7 +58,6 @@ class SchedulesController < ApplicationController
   # Public actions
   # ############################################################################
     
-    
   # View the schedule for the given week/user/project
   def index
     unless @users.empty?
@@ -1157,36 +1156,31 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
   def visible_users(members)
     self.class.visible_users(members)
   end
+
   def filtered_visible_projects
-    if @filtered_projects.nil?
-      filtered = []
-      @projects.each do |p| 
-        filtered << p if is_involved(p, User.current)
-      end
-      @filtered_projects = filtered
+    filtered = []
+    @projects.each do |p| 
+      filtered << p if is_project_allowed?(p, User.current)
     end
+    @filtered_projects = filtered
   end
-  def is_involved(project, user)
-    return false unless user.status == User::STATUS_ACTIVE
-    project.memberships.each do |m|
-      if m.user == user
-        m.roles.each do |r|
-          return true if ["Manager", "Developer", "Client", "Technical leader"].include? r.name
-        end
-        return false
-      end
-    end
-    return false
+
+  def is_project_allowed?(project, user)
+    return (user.allowed_to?(:view_schedules, project) ||
+            user.allowed_to?(:edit_own_schedules, project) ||
+            user.admin? ||
+            user.allowed_to?(:edit_all_schedules, project))
   end
+
   def filtered_users
     if @project.nil?
-      @filtered_users = @users
-    else
       filtered = []
-      @project.memberships.each do |m|
-        filtered << m.user if is_involved(@project, m.user)
+      @projects.each do |p|
+        filtered << p.memberships.select {|m| m.roles.detect {|role| role.allowed_to?(:log_time)}}.collect {|m| m.user}
       end
-      @filtered_users = filtered
+      @filtered_users = filtered.flatten.delete_if {|f| f.nil? || f.status == User::STATUS_LOCKED}.uniq.sort
+    else
+      @filtered_users = @project.memberships.select {|m| m.roles.detect {|role| role.allowed_to?(:log_time)}}.collect {|m| m.user}.uniq.sort
     end
   end
 end
