@@ -1178,7 +1178,7 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
       @projects.each do |p|
         filtered << p.memberships.select {|m| m.roles.detect {|role| role.allowed_to?(:log_time)}}.collect {|m| m.user}
       end
-      @filtered_users = filtered.flatten.delete_if {|f| f.nil? || f.status == User::STATUS_LOCKED}.uniq.sort
+      @filtered_users = filtered.flatten.delete_if {|f| f.nil? || f.locked?}.uniq.sort
     else
       @filtered_users = @project.memberships.select {|m| m.roles.detect {|role| role.allowed_to?(:log_time)}}.collect {|m| m.user}.uniq.sort
     end
