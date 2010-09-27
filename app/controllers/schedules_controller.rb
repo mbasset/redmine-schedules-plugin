@@ -1,15 +1,17 @@
+require 'rubygems'
+require 'icalendar'
+require 'date'
+
 class SchedulesController < ApplicationController
   unloadable
-
 
   # ############################################################################
   # Initialization
   # ############################################################################
 
-
   # Filters
-  before_filter :require_login
-  before_filter :find_users_and_projects, :only => [:index, :edit, :users, :projects, :fill]
+  before_filter :require_login, :except => :ical
+  before_filter :find_users_and_projects, :only => [:index, :edit, :users, :projects, :fill, :ical]
   before_filter :find_optional_project, :only => [:report, :details]
   before_filter :find_project_by_version, :only => [:estimate]
   before_filter :save_entries, :only => [:edit]
@@ -20,6 +22,7 @@ class SchedulesController < ApplicationController
   include SchedulesHelper
   include ValidatedFieldsHelper
   include SortHelper
+  include Icalendar
   helper :sort
   helper :validated_fields
 
@@ -68,6 +71,26 @@ class SchedulesController < ApplicationController
       render :action => 'index', :layout => !request.xhr?
     end
   end
+
+  def ical
+    unless @user.nil?
+      @filtered_users = [@user]
+      @entries = get_entries false
+      @availabilities = get_availabilities
+      
+      cal = Calendar.new
+      @entries.each do |entry|
+        event = Event.new
+
+        event.summary = entry.project.name
+        event.start = entry.date
+        
+        cal.add_event event
+      end
+      
+      send_data cal.to_ical.to_s, :type => 'text/calendar', :filename => 'calendar.ics', :disposition => 'attachment'
+    end
+  end
     
   #
   def projects
@@ -80,15 +103,13 @@ class SchedulesController < ApplicationController
     @focus = "users"
     index
   end
-    
-    
+        
   # View the schedule for the given week for the current user
   def my_index
     params[:user_id] = User.current.id
     find_users_and_projects
     index
   end
-    
     
   # Edit the current user's default availability
   def default
@@ -1034,8 +1055,7 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
     end
     availabilities
   end
-    
-  #
+
   def find_user
     params[:user_id] = User.current.id if params[:user_id].nil?
     deny_access unless User.current.id == params[:user_id].to_i || User.current.admin?
