@@ -11,7 +11,9 @@ class SchedulesController < ApplicationController
 
   # Filters
   before_filter :require_login, :except => :ical
-  before_filter :find_users_and_projects, :only => [:index, :edit, :users, :projects, :fill, :ical]
+  before_filter :check_if_login_required, :except => :ical
+  before_filter :prepare_calendar, :only => :ical
+  before_filter :find_users_and_projects, :only => [:index, :edit, :users, :projects, :fill]
   before_filter :find_optional_project, :only => [:report, :details]
   before_filter :find_project_by_version, :only => [:estimate]
   before_filter :save_entries, :only => [:edit]
@@ -73,24 +75,24 @@ class SchedulesController < ApplicationController
   end
 
   def ical
-    unless @user.nil?
-      @filtered_users = [@user]
-      @entries = get_entries false
-      @availabilities = get_availabilities
+    @user = User.find(params[:user_id])
+    @users = @filtered_users = [@user]
+    @entries = get_entries false
+    
+    cal = Calendar.new
+    @entries.each do |entry|
+      event = Event.new
       
-      cal = Calendar.new
-      @entries.each do |entry|
-        event = Event.new
-
-        event.summary = entry.project.name
-        event.start = entry.date
-        
-        cal.add_event event
-      end
+      event.summary = entry.project.name
+      event.start = entry.date
       
-      send_data cal.to_ical.to_s, :type => 'text/calendar', :filename => 'calendar.ics', :disposition => 'attachment'
+      cal.add_event event
     end
-  end
+    
+    send_data cal.to_ical.to_s, :type => 'text/calendar', :filename => 'calendar.ics', :disposition => 'attachment'
+  rescue ActiveRecord::RecordNotFound
+    render_404
+end
     
   #
   def projects
@@ -1075,7 +1077,6 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
     
   #
   def find_users_and_projects
-    
     # Parse the focused user and/or project
     @project = Project.find(params[:project_id]) if params[:project_id]
     @user = User.find(params[:user_id]) if params[:user_id]
@@ -1087,18 +1088,20 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
     @users = @users & [@user] unless @user.nil?
     @users = [@user] if @users.empty? && User.current.admin?
     deny_access if (@projects.empty? || @users.empty?) && !User.current.admin?
-        
+
+    prepare_calendar
+  rescue ActiveRecord::RecordNotFound
+    render_404
+  end
+    
+  def prepare_calendar
     # Parse the given date or default to today
     @date = Date.parse(params[:date]) if params[:date]
     @date ||= Date.civil(params[:year].to_i, params[:month].to_i, params[:day].to_i) if params[:year] && params[:month] && params[:day]
     @date ||= Date.today
     @calendar = Redmine::Helpers::Calendar.new(@date, current_language, :week)
-        
-  rescue ActiveRecord::RecordNotFound
-    render_404
   end
-    
-    
+
   # Determines if a given relation will prevent another from being worked on
   def schedule_relation?(relation)
     return (relation.relation_type == "blocks" || relation.relation_type == "precedes")
