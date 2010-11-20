@@ -17,12 +17,22 @@ schedHours = ScheduledIssue.hours(entry.user.id, entry.project.id, entry.date);
       <label><%= l(:label_scheduled_hours) %>: </label><%= schedHours.to_f %><br/>
       
       <% if !ScheduledIssue.notEmpty?(entry.user.id, entry.project.id, entry.date) %>
-      <span id="scheduled_info_link" class="scheduled_info_link" style="text-decoration: underline; color: blue; cursor: pointer"
+      
+        <% if Setting.plugin_redmine_goyello_schedules['show_full_issue_list'] != '0' %>
+        <span id="scheduled_info_link" class="scheduled_info_link" style="text-decoration: underline; color: blue; cursor: pointer"
             onclick="scheduledIssuesInfo('<%= entry.date %>', '<%= entry.user.id %>', '<%= entry.project.id %>', event)">
         </span><br/>        
         <%= render :partial => 'scheduled_issue_info', :collection => ScheduledIssue.find_by_all(entry.user_id, entry.project_id, entry.date) %>
+        <% else %> 
+          <a>aha</a>
+        <% end %>
       <% else %> <%=  l(:info_no_scheduled_issues) %> <% end %>
       <br/>
+      
+      
+      
+      
+      
     <% end %>
 
     <%= "<br/>" if @project.nil? && @user.nil? %>

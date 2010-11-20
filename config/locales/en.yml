@@ -62,3 +62,5 @@ en:
   label_no_developers_in_project: There are no developers in this project.
   none: None
   no_one: No one
+  label_show_issue_details: Show issue list in schedule overview
+  schedule_plugin_view_preferences: View Preferences
