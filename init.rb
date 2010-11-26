@@ -6,7 +6,7 @@ $holiday_locale = 'ca_bc'   # Set this to the same region (or subregion if appro
 require_dependency 'schedule_compatibility'
 require_dependency 'issue_schedule_destroy_dependency'
 
-Redmine::Plugin.register :redmine_goyello_schedules do
+Redmine::Plugin.register :redmine_schedules do
 	name 'Redmine Schedules plugin'
 	author 'Brad Beattie'
 	description 'This plugin provides instances of Redmine a method with which to allocate users to projects and to track this allocation over time. It does so by creating daily time estimates of hours worked per project per user.'
