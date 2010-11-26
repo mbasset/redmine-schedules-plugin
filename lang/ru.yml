@@ -27,3 +27,6 @@
   permission_view_schedules: Просмотр расписаний
   permission_edit_own_schedules: Изменение собственного расписания
   permission_edit_all_schedules: Изменение всех расписаний
+  label_scheduled_vs_spent_time: Потраченное и запланированное время
+  label_bulk_schedules_index: Все расписания
+  
