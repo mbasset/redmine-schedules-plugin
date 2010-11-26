@@ -1,5 +1,4 @@
 <h3><%= l(:label_schedules_my_index) %></h3>
-
 <%
 	@date = Date.civil(Date.today.year, Date.today.month, Date.today.day)
 	@calendar = Redmine::Helpers::Calendar.new(@date, current_language, :week)
@@ -21,5 +20,7 @@
 <% end %>
 
 <% content_for :header_tags do %>
-    <%= stylesheet_link_tag 'schedules', :plugin => 'redmine_schedules' %>
+    <%= stylesheet_link_tag 'schedules', :plugin => 'redmine_goyello_schedules' %>
+    <%= javascript_include_tag 'schedule_edit', :plugin => 'redmine_goyello_schedules' %>
+    <%= javascript_include_tag 'modalbox', :plugin => 'redmine_goyello_schedules' %>
 <% end %>

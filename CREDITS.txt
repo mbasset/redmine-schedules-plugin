@@ -1,0 +1,13 @@
+Thanks go to the following people for patches and contributions:
+
+* Brad Beattie - Original developer
+* Antono 
+* Standout 
+* Rjrodger
+* Erik Wegner
+* http://www.goyello.com 
+* http://www.zyxware.com
+
+If your patch has gone in and you don't find your name in here do let me know and sorry for the omission.
+
+* The many translators who have submitted patches
