@@ -132,7 +132,15 @@ end
     filtered_visible_projects
     filtered_users
     @entries = get_entries
+    @versions = get_versions
     @closed_entries = get_closed_entries
+  
+  
+    @versions.each do |version|
+      logger.info version.name
+    end    
+    
+    @cname = @versions.class.name.underscore.humanize
   
     render :layout => !request.xhr?
   end
@@ -387,15 +395,15 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
   #
   #
   # # # #
-  def retrieveIssues(user_id, project_id, date)
+  def retrieveIssues(user_id, project_id, date, version_id)
     if(!user_id.nil? && !project_id.nil? && !date.nil?)
       #
       # get Tracker from settings
       default_tracker_id = Setting.plugin_redmine_schedules['tracker'].to_s
 
       allIssues = Issue.all(:conditions => ["issues.project_id = :pid AND
-        issue_statuses.is_closed = 0 AND trackers.id = " + default_tracker_id,
-          { :pid => project_id, :uid => user_id}],
+        issues.assigned_to_id = :uid AND issue_statuses.is_closed = 0 AND issues.fixed_version_id = :vid  AND trackers.id = " + default_tracker_id,
+          { :pid => project_id, :uid => user_id, :vid => version_id}],
         :joins => "LEFT JOIN issue_statuses ON issues.status_id = issue_statuses.id LEFT JOIN trackers on issues.tracker_id = trackers.id");
 
       todaysScheduledIssues = ScheduledIssue.all(:conditions => ["user_id = ? AND date = ? AND project_id = ?", user_id, date, project_id]);
@@ -576,6 +584,7 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
     @user_id = params[:user_id];
     @date = params[:date];
     @owner = params[:owner];
+    @version = params[:version_id]
     project = Project.find(params[:project_id]);
     
     #    @project = Project.find_by_id(params[:project_id]);
@@ -586,7 +595,7 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
       params[:date]);
     @previouslyUsed = ScheduledIssue.previouslyUsedHours(params[:user_id], params[:project_id], params[:date]);
     @used = not_empty_hours(params[:user_id], params[:project_id], params[:date])
-    issues = retrieveIssues(params[:user_id], params[:project_id], params[:date]);
+    issues = retrieveIssues(params[:user_id], params[:project_id], params[:date], params[:version_id]);
     if(!issues.nil? && !issues.empty?) then
       @scheduledIssues = issues['scheduledIssues'];
       @notScheduledIssues = issues['notScheduledIssues'];
@@ -1012,6 +1021,14 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
       flash[:notice] = l(:notice_successful_update)
       redirect_to({:action => 'index', :project_id => @project.id})
     end
+  end
+
+  def get_versions()
+    logger.info '#######################################################################################################'
+    versions = Version.all(:conditions => 'project_id = ' + @project.id.to_s)
+    logger.info params[:version]
+    logger.info '#######################################################################################################'
+    return versions
   end
     
   # Get schedule entries between two dates for the specified users and projects

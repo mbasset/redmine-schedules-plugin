@@ -432,6 +432,8 @@ function IsIE7Browser()
  */
 function parseCellId(id)
 {
+	
+	
   var date = id.replace(/^schedule_entry\[.+\]\[(.+)\]\[.+\]$/, "$1");
   var user_id = id.replace(/^schedule_entry\[(.+)\]\[.+\]\[.+\]$/, "$1");
   var project_id = id.replace(/^schedule_entry\[.+\]\[.+\]\[(.+)\]$/, "$1");
@@ -457,7 +459,9 @@ function idToParams(id)
     }
   }
   
+	var version_id = $F($('version'));
+
   var arr = parseCellId(_owner.id);
   return "user_id=" + arr.user_id + "&project_id=" +
-  arr.project_id + "&date=" + arr.date;
+  arr.project_id + "&date=" + arr.date + '&version_id=' + version_id;
 }

@@ -1,0 +1,8 @@
+<fieldset>
+<legend><%= l(:schedule_plugin_view_preferences) %></legend>
+<p>
+  <label><%= l(:label_show_issue_details) %></label>
+  <%= select_tag('settings[show_full_issue_list]',
+  options_for_select(ScheduleDefault::SHOW_FULL_ISSUE_LIST.to_a, @settings['show_full_issue_list'])) %>
+</p>
+</fieldset>

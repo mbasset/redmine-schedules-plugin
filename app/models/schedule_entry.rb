@@ -14,8 +14,8 @@ class ScheduleEntry < ActiveRecord::Base
 		result 
 	end
 	
-	def form_id
-		"schedule_entry[#{user_id}][#{date}][#{project_id}]" 
+	def form_id	  
+		"schedule_entry[#{user_id}][#{date}][#{project_id}]"
 	end
 	
 	def <=>(other)

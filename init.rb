@@ -18,6 +18,11 @@ Redmine::Plugin.register :redmine_schedules do
     permission :edit_all_schedules, {}, :require => :member
   end
 
+  settings(:partial => 'preferences/schedule_prefs',
+           :default => {
+             'show_full_issue_list' => '0'
+           })
+
   requires_redmine :version_or_higher => '0.9.0'
   settings :default => { 'tracker' => -1 }, :partial => 'settings/redmine_scheduled_settings'
 	
