@@ -10,6 +10,7 @@ class SchedulesController < ApplicationController
   # ############################################################################
 
   # Filters
+  before_filter :load_params
   before_filter :require_login, :except => :ical
   before_filter :check_if_login_required, :except => :ical
   before_filter :prepare_calendar, :only => :ical
