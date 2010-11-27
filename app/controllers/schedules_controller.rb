@@ -364,10 +364,14 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
   # # # #
   def retrieveIssues(user_id, project_id, date)
     if(!user_id.nil? && !project_id.nil? && !date.nil?)
+      #
+      # get Tracker from settings
+      default_tracker_id = Setting.plugin_redmine_schedules['tracker'].to_s
+
       allIssues = Issue.all(:conditions => ["issues.project_id = :pid AND
-        issues.assigned_to_id = :uid AND issue_statuses.is_closed = 0",
+        issue_statuses.is_closed = 0 AND trackers.id = " + default_tracker_id,
           { :pid => project_id, :uid => user_id}],
-        :joins => "LEFT JOIN issue_statuses ON issues.status_id = issue_statuses.id");
+        :joins => "LEFT JOIN issue_statuses ON issues.status_id = issue_statuses.id LEFT JOIN trackers on issues.tracker_id = trackers.id");
 
       todaysScheduledIssues = ScheduledIssue.all(:conditions => ["user_id = ? AND date = ? AND project_id = ?", user_id, date, project_id]);
 
@@ -569,7 +573,7 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
 
     if(@@remote == true)
       @@remote = false;
-      return render_to_string :partial => 'scheduled_ticket';
+      return render_to_string(:partial => 'scheduled_ticket');
     else
       render :partial => 'scheduled_ticket' and return;
     end

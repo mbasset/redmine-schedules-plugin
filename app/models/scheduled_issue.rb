@@ -51,7 +51,7 @@ class ScheduledIssue < ActiveRecord::Base
   #
   # # #
   def issue()
-    return Issue.find_by_id issue_id()
+    return (Issue.find_by_id issue_id())
   end
 
   #
