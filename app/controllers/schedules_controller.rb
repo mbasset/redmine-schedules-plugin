@@ -30,6 +30,7 @@ class SchedulesController < ApplicationController
 
   @@remote = false;
 
+
   def SchedulesController.fetch_default_status_id
     default_status = IssueStatus.find_by_is_default(1);
     if(default_status.nil?)
@@ -44,7 +45,6 @@ class SchedulesController < ApplicationController
   # Class methods
   # ############################################################################
     
-    
   # Return a list of the projects the user has permission to view schedules in
   def self.visible_projects
     Project.find(:all, :conditions => Project.allowed_to_condition(User.current, :view_schedules))
@@ -57,7 +57,6 @@ class SchedulesController < ApplicationController
   rescue
     members.select {|m| m.role.allowed_to?(:view_schedules)}.collect {|m| m.user}.uniq.sort
   end
-
 
   # ############################################################################
   # Public actions
@@ -92,7 +91,7 @@ class SchedulesController < ApplicationController
     send_data cal.to_ical.to_s, :type => 'text/calendar', :filename => 'calendar.ics', :disposition => 'attachment'
   rescue ActiveRecord::RecordNotFound
     render_404
-end
+  end
     
   #
   def projects
@@ -183,7 +182,7 @@ end
       :estimated_hours => removeDecimalComma(params[:quick_issue][:estimated]).to_f,
       :due_date => nil);
 
-      issue.fixed_version_id = params[:quick_issue][:sprint].to_i;
+    issue.fixed_version_id = params[:quick_issue][:sprint].to_i;
 
     issue.save
 
@@ -842,7 +841,6 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
     end
   end
     
-    
   # Given a set of schedule entries, sift through them looking for changes in
   # the schedule. For each change, remove the old entry and save the new one
   # assuming sufficient access by the modifying user.
@@ -942,7 +940,6 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
     end
   end
 
-
   # Save the given default availability if one was provided
   def save_default
     find_user
@@ -964,7 +961,6 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
     end
   end
     
-    
   # Fills user schedules up to a specified number of hours
   def fill_entries
     if request.post?
@@ -979,47 +975,48 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
       # Fill the schedule of each specified user
       params[:fill_total].each do |user_id, fill_total|
                 
-      # Prepare variables for looping
-      hours_remaining = fill_total.to_f
-      user_id = user_id.to_i
-      default = defaults[user_id].weekday_hours
-      date_index = @date
-              
-      # Iterate through days until we've filled up enough
-      while hours_remaining > 0
-        fill_hours = params[:fill_entry][user_id.to_s][date_index.wday.to_s].to_f
-        if fill_hours > 0 && default[date_index.wday] > 0
-                  
-          # Find entries for this day
-          restrictions = "date = '#{date_index}' AND user_id = #{user_id}"
-          project_entry = ScheduleEntry.find(:first, :conditions => restrictions + " AND project_id = #{@project.id}")
-          other_project_hours = ScheduleEntry.sum(:hours, :conditions => restrictions + " AND project_id <> #{@project.id}")
-          closed_hours = ScheduleClosedEntry.sum(:hours, :conditions => restrictions)
-          # Determine the number of hours available
-          available_hours = default[date_index.wday]
-          available_hours -= closed_hours
-          available_hours -= other_project_hours
-          available_hours -= project_entry.hours unless project_entry.nil?
-          available_hours = [available_hours, fill_hours, hours_remaining].min
-          available_hours = 0 if date_index.holiday?($holiday_locale, :observed)
-          # Create an entry if we're adding time to this day
-          if available_hours > 0
-            new_entry = ScheduleEntry.new
-            new_entry.project_id = @project.id
-            new_entry.user_id = user_id
-            new_entry.date = date_index
-            new_entry.hours = available_hours
-            new_entry.hours += project_entry.hours unless project_entry.nil?
-            save_entry(new_entry, project_entry, @project.id)
-            hours_remaining -= available_hours
-          end
-          date_index += 1
-        end
-      end
+        # Prepare variables for looping
+        hours_remaining = fill_total.to_f
+        user_id = user_id.to_i
+        default = defaults[user_id].weekday_hours
+        date_index = @date
+                
+        # Iterate through days until we've filled up enough
+        while hours_remaining > 0
+          fill_hours = params[:fill_entry][user_id.to_s][date_index.wday.to_s].to_f
+          if fill_hours > 0 && default[date_index.wday] > 0
                     
-      # Inform the user that the update was successful
-      flash[:notice] = l(:notice_successful_update)
-      redirect_to({:action => 'index', :project_id => @project.id})
+            # Find entries for this day
+            restrictions = "date = '#{date_index}' AND user_id = #{user_id}"
+            project_entry = ScheduleEntry.find(:first, :conditions => restrictions + " AND project_id = #{@project.id}")
+            other_project_hours = ScheduleEntry.sum(:hours, :conditions => restrictions + " AND project_id <> #{@project.id}")
+            closed_hours = ScheduleClosedEntry.sum(:hours, :conditions => restrictions)
+            # Determine the number of hours available
+            available_hours = default[date_index.wday]
+            available_hours -= closed_hours
+            available_hours -= other_project_hours
+            available_hours -= project_entry.hours unless project_entry.nil?
+            available_hours = [available_hours, fill_hours, hours_remaining].min
+            available_hours = 0 if date_index.holiday?($holiday_locale, :observed)
+            # Create an entry if we're adding time to this day
+            if available_hours > 0
+              new_entry = ScheduleEntry.new
+              new_entry.project_id = @project.id
+              new_entry.user_id = user_id
+              new_entry.date = date_index
+              new_entry.hours = available_hours
+              new_entry.hours += project_entry.hours unless project_entry.nil?
+              save_entry(new_entry, project_entry, @project.id)
+              hours_remaining -= available_hours
+            end
+            date_index += 1
+          end
+        end
+                      
+        # Inform the user that the update was successful
+        flash[:notice] = l(:notice_successful_update)
+        redirect_to({:action => 'index', :project_id => @project.id})
+      end
     end
   end
 
@@ -1210,7 +1207,6 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
   def visible_users(members)
     self.class.visible_users(members)
   end
-
   def filtered_visible_projects
     filtered = []
     @projects.each do |p| 
