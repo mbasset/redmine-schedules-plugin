@@ -104,7 +104,7 @@
     :id => "qiButton", :class => 'control_button' %>
 
   <%= button_to_function l(:label_issue_new),
-    "window.location.href='/projects/#{@project.id}/issues/new?assigned_to=#{@user_id}&start_date=#{@date}'",
+    "window.location.href='/redmine/projects/#{@project.id}/issues/new?assigned_to=#{@user_id}&start_date=#{@date}'",
     :class => 'control_button', :id => "issue_new_button", :onblur => " $('usedHours').focus();" %>
 </form>
 

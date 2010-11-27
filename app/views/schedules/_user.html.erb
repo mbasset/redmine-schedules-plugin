@@ -12,7 +12,7 @@ closed_entries = @closed_entries.index_by {|entry| entry.date.ajd}
 		  </tr>
 	  </thead>
     <tbody>
-      <% @projects.each do |project| %>
+      <% @filtered_projects.each do |project| %>
         <% date_entries = project_entries[project.id].nil? ? [] : project_entries[project.id].index_by {|entry| entry.date.ajd} %>
         <tr>
           <%= "<th>#{project}</th>" %>
@@ -53,7 +53,7 @@ closed_entries = @closed_entries.index_by {|entry| entry.date.ajd}
             else
               entry = closed_entries[day.ajd]
             end
-          %>
+            %>
             <% if (User.current == user) || User.current.admin? %>
               <%= text_field "schedule_closed_entry", "hours", :size => 3, :name => entry.form_id, :id => entry.form_id, :value => entry.hours %>
             <% else %>
@@ -77,4 +77,5 @@ closed_entries = @closed_entries.index_by {|entry| entry.date.ajd}
     </tfoot>
   </table>
 </div>  
+
 

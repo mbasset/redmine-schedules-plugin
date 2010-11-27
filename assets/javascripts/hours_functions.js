@@ -78,7 +78,7 @@ function saveEmptyHours()
   var params = idToParams(_owner.id) + "&hours=" + hours.toString() +
   "&hours_to_schedule=" + $('usedHours').value;
 
-  new Ajax.Request('/schedules/updateEmptyHours', {
+  new Ajax.Request('/redmine/schedules/updateEmptyHours', {
     asynchronous: false,
     evalScripts: true,
     onComplete:function(response){
@@ -483,7 +483,7 @@ function computeScheduledHours()
  */
 function updateEditfieldValue()
 {
-  new Ajax.Request('/schedules/r_schedule_entry_hours', {
+  new Ajax.Request('/redmine/schedules/r_schedule_entry_hours', {
     asynchronous:false,
     evalScripts:true,
     onComplete:function(response)

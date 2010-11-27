@@ -2,7 +2,7 @@
 closed_entries = @closed_entries.index_by {|entry| entry.date.ajd}
 user_entries = @entries.group_by {|entry| entry.user_id}
 %>
-<% if !@users.first.nil? %>
+<% if !@filtered_users.first.nil? %>
   <div class="schedule_cal_wrapper">
     <table class="cal schedule_entry_grid">
 	    <thead>
@@ -14,7 +14,7 @@ user_entries = @entries.group_by {|entry| entry.user_id}
 		    </tr>			  
 	    </thead>
       <tbody>
-        <% @users.each do |user| %>
+        <% @filtered_users.each do |user| %>
           <% date_entries = user_entries[user.id].nil? ? [] : user_entries[user.id].index_by {|entry| entry.date.ajd} %>
           <tr>
             <%= "<th>#{user}</th>" %>

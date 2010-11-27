@@ -1,15 +1,18 @@
+require 'rubygems'
+require 'icalendar'
+require 'date'
+
 class SchedulesController < ApplicationController
   unloadable
-
 
   # ############################################################################
   # Initialization
   # ############################################################################
 
-
   # Filters
-  before_filter :require_login
-  before_filter :load_params
+  before_filter :require_login, :except => :ical
+  before_filter :check_if_login_required, :except => :ical
+  before_filter :prepare_calendar, :only => :ical
   before_filter :find_users_and_projects, :only => [:index, :edit, :users, :projects, :fill]
   before_filter :find_optional_project, :only => [:report, :details]
   before_filter :find_project_by_version, :only => [:estimate]
@@ -21,6 +24,7 @@ class SchedulesController < ApplicationController
   include SchedulesHelper
   include ValidatedFieldsHelper
   include SortHelper
+  include Icalendar
   helper :sort
   helper :validated_fields
 
@@ -45,8 +49,7 @@ class SchedulesController < ApplicationController
   def self.visible_projects
     Project.find(:all, :conditions => Project.allowed_to_condition(User.current, :view_schedules))
   end
-    
-    
+   
   # Return a list of the users in the given projects which have permission to
   # view schedules
   def self.visible_users(members)
@@ -60,15 +63,36 @@ class SchedulesController < ApplicationController
   # Public actions
   # ############################################################################
     
-    
   # View the schedule for the given week/user/project
   def index
     unless @users.empty?
+      filtered_visible_projects
+      filtered_users 
       @entries = get_entries
       @availabilities = get_availabilities
       render :action => 'index', :layout => !request.xhr?
     end
   end
+
+  def ical
+    @user = User.find(params[:user_id])
+    @users = @filtered_users = [@user]
+    @entries = get_entries false
+    
+    cal = Calendar.new
+    @entries.each do |entry|
+      event = Event.new
+      
+      event.summary = entry.project.name
+      event.start = entry.date
+      
+      cal.add_event event
+    end
+    
+    send_data cal.to_ical.to_s, :type => 'text/calendar', :filename => 'calendar.ics', :disposition => 'attachment'
+  rescue ActiveRecord::RecordNotFound
+    render_404
+end
     
   #
   def projects
@@ -81,8 +105,7 @@ class SchedulesController < ApplicationController
     @focus = "users"
     index
   end
-    
-    
+        
   # View the schedule for the given week for the current user
   def my_index
     params[:user_id] = User.current.id
@@ -106,6 +129,8 @@ class SchedulesController < ApplicationController
 
   # Edit the schedule for the given week/user/project
   def edit
+    filtered_visible_projects
+    filtered_users
     @entries = get_entries
     @closed_entries = get_closed_entries
   
@@ -994,7 +1019,7 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
     restrictions = "(date BETWEEN '#{startdt}' AND '#{enddt}')"
     restrictions << " AND user_id = " + @user.id.to_s unless @user.nil?
     if project_restriction
-      restrictions << " AND project_id IN ("+@projects.collect {|project| project.id.to_s }.join(',')+")" unless @projects.empty?
+      restrictions << " AND project_id IN (" + @filtered_projects.collect {|project| project.id.to_s }.join(',') + ")" unless @filtered_projects.empty?
       restrictions << " AND project_id = " + @project.id.to_s unless @project.nil?
     elsif ignore_project
       restrictions << " AND project_id <> #{@project.id}"
@@ -1003,15 +1028,15 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
   end
     
   # Get closed entries between two dates for the specified users
-  def get_closed_entries(startdt = @calendar.startdt, enddt = @calendar.enddt)
-    restrictions = "(date BETWEEN '#{startdt}' AND '#{enddt}')"
-    restrictions << " AND user_id IN ("+@users.collect {|user| user.id.to_s }.join(',')+")" unless @users.empty?
+  def get_closed_entries
+    restrictions = "(date BETWEEN '#{@calendar.startdt}' AND '#{@calendar.enddt}')"
+    restrictions << " AND user_id IN ("+@filtered_users.collect {|user| user.id.to_s }.join(',')+")" unless @filtered_users.empty?
     ScheduleClosedEntry.find(:all, :conditions => restrictions)
   end
     
   # Get schedule defaults for the specified users
   def get_defaults(user_ids = nil)
-    restrictions = "user_id IN ("+@users.collect {|user| user.id.to_s }.join(',')+")" unless @users.empty?
+    restrictions = "user_id IN ("+@filtered_users.collect {|user| user.id.to_s }.join(',')+")" unless @filtered_users.empty?
     unless user_ids.nil? then
       restrictions = "user_id IN ("+user_ids.join(',')+")" unless user_ids.empty?
     end
@@ -1037,7 +1062,7 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
     availabilities = Hash.new
     (startdt..enddt).each do |day|
       availabilities[day] = Hash.new
-      @users.each do |user|
+      @filtered_users.each do |user|
         availabilities[day][user.id] = 0
         availabilities[day][user.id] = defaults_by_user[user.id].weekday_hours[day.wday] unless defaults_by_user[user.id].nil?
         availabilities[day][user.id] -= entries_by_user[user.id][day].collect {|entry| entry.hours }.sum unless entries_by_user[user.id].nil? || entries_by_user[user.id][day].nil?
@@ -1048,8 +1073,7 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
     end
     availabilities
   end
-    
-  #
+
   def find_user
     params[:user_id] = User.current.id if params[:user_id].nil?
     deny_access unless User.current.id == params[:user_id].to_i || User.current.admin?
@@ -1080,10 +1104,19 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
     @users = @users & [@user] unless @user.nil?
     @users = [@user] if !@user.nil? && @users.empty? && User.current.admin?
     deny_access if (@projects.empty? || @users.nil? || @users.empty?) && !User.current.admin?
+    prepare_calendar
   rescue ActiveRecord::RecordNotFound
     render_404
   end
     
+  def prepare_calendar
+    # Parse the given date or default to today
+    @date = Date.parse(params[:date]) if params[:date]
+    @date ||= Date.civil(params[:year].to_i, params[:month].to_i, params[:day].to_i) if params[:year] && params[:month] && params[:day]
+    @date ||= Date.today
+    @calendar = Redmine::Helpers::Calendar.new(@date, current_language, :week)
+  end
+
   # Determines if a given relation will prevent another from being worked on
   def schedule_relation?(relation)
     return (relation.relation_type == "blocks" || relation.relation_type == "precedes")
@@ -1159,5 +1192,32 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
   end
   def visible_users(members)
     self.class.visible_users(members)
+  end
+
+  def filtered_visible_projects
+    filtered = []
+    @projects.each do |p| 
+      filtered << p if is_project_allowed?(p, User.current)
+    end
+    @filtered_projects = filtered
+  end
+
+  def is_project_allowed?(project, user)
+    return (user.allowed_to?(:view_schedules, project) ||
+            user.allowed_to?(:edit_own_schedules, project) ||
+            user.admin? ||
+            user.allowed_to?(:edit_all_schedules, project))
+  end
+
+  def filtered_users
+    if @project.nil?
+      filtered = []
+      @projects.each do |p|
+        filtered << p.memberships.select {|m| m.roles.detect {|role| role.allowed_to?(:log_time)}}.collect {|m| m.user}
+      end
+      @filtered_users = filtered.flatten.delete_if {|f| f.nil? || f.locked?}.uniq.sort
+    else
+      @filtered_users = @project.memberships.select {|m| m.roles.detect {|role| role.allowed_to?(:log_time)}}.collect {|m| m.user}.delete_if {|f| f.nil? || f.locked?}.uniq.sort
+    end
   end
 end
