@@ -1042,8 +1042,8 @@ AND project_id = #{params[:project_id]} AND date='#{params[:date]}'")
   end
     
   # Get closed entries between two dates for the specified users
-  def get_closed_entries
-    restrictions = "(date BETWEEN '#{@calendar.startdt}' AND '#{@calendar.enddt}')"
+  def get_closed_entries(startdt = @calendar.startdt, enddt = @calendar.enddt)
+    restrictions = "(date BETWEEN '#{startdt}' AND '#{enddt}')"
     restrictions << " AND user_id IN ("+@filtered_users.collect {|user| user.id.to_s }.join(',')+")" unless @filtered_users.empty?
     ScheduleClosedEntry.find(:all, :conditions => restrictions)
   end
