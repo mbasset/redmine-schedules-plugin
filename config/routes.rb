@@ -10,4 +10,3 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'account/schedule/:user_id/default', :controller => 'schedules', :action => 'default'
   map.connect 'my/schedule', :controller => 'schedules', :action => 'my_index'
 end
-
