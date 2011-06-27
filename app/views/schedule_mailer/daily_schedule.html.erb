@@ -2,7 +2,7 @@ Hello <%= @user %>,
 
 <p>Please see your schedule for <%= @date.to_s %> below:</p>
 
-<% if @daily_entries.empty? %>
+<% if !@daily_entries || @daily_entries.empty? %>
   <p>Nothing scheduled for today.</p>
 <% else %>
   <ul>
@@ -16,7 +16,7 @@ Hello <%= @user %>,
 
 <h3><%= l(:label_schedules_my_index) %></h3>
 
-<% if @calendar && !@entries.empty? %>
+<% if @calendar && @entries && !@entries.empty? %>
   <%= render :partial => 'schedules/calendar', :locals => {:calendar => @calendar } %>
 <% else %>
   <p class="nodata"><%= l(:label_no_data) %></p>
