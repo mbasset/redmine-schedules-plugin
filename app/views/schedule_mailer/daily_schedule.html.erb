@@ -1,0 +1,29 @@
+Hello <%= @user %>,
+
+<p>Please see your schedule for <%= @date.to_s %> below:</p>
+
+<% if @daily_entries.empty? %>
+  <p>Nothing scheduled for today.</p>
+<% else %>
+  <ul>
+    <% @daily_entries.each do |e| %>
+      <li><%= "#{e.project.name} for  #{e.hours} hours" %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<p>Additionally this is how your week is looking so far:</p>
+
+<h3><%= l(:label_schedules_my_index) %></h3>
+
+<% if @calendar && !@entries.empty? %>
+  <%= render :partial => 'schedules/calendar', :locals => {:calendar => @calendar } %>
+<% else %>
+  <p class="nodata"><%= l(:label_no_data) %></p>
+<% end %>
+
+<% content_for :header do %>
+  <style type="text/css">
+    <%= File.read(Rails.root.join("vendor", "plugins", "redmine_schedules", "assets", "stylesheets", "schedules.css")) %>
+  </style>
+<% end %>
